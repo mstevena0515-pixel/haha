@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Z世代地質探索者 | 馬均翔 計畫書</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --surface: rgba(20, 30, 48, 0.6);
+            --surface-hover: rgba(30, 45, 70, 0.8);
+            --border: rgba(255, 255, 255, 0.1);
+            --primary: #10b981; /* 科技綠 */
+            --secondary: #3b82f6; /* 數據藍 */
+            --accent: #8b5cf6; /* 宇宙紫 */
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --gradient-text: linear-gradient(135deg, #10b981, #3b82f6);
+        }
+
+        /* 強制全局套用單一字體 */
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: 'Noto Sans TC', sans-serif !important;
+        }
+        
+        body { 
+            background-color: var(--bg-color); 
+            color: var(--text-main); 
+            line-height: 1.8; 
+            overflow-x: hidden; 
+            background-image: radial-gradient(circle at 15% 50%, rgba(16, 185, 129, 0.05), transparent 25%),
+                              radial-gradient(circle at 85% 30%, rgba(59, 130, 246, 0.05), transparent 25%);
+            background-attachment: fixed;
+        }
+
+        .text-gradient {
+            background: var(--gradient-text);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
+        /* 導覽列 */
+        nav { 
+            background: rgba(11, 15, 25, 0.85); 
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            padding: 12px 30px; 
+            position: fixed; 
+            width: max-content;
+            max-width: 95%;
+            top: 20px; 
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000; 
+            border-radius: 50px;
+            display: flex; 
+            gap: 30px;
+            align-items: center; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        nav .logo { font-weight: 900; font-size: 1.1rem; color: #fff; display: flex; align-items: center; gap: 8px;}
+        nav ul { list-style: none; display: flex; gap: 20px; }
+        nav a { text-decoration: none; color: var(--text-muted); font-weight: 700; font-size: 0.95rem; transition: all 0.3s; }
+        nav a:hover { color: var(--primary); text-shadow: 0 0 10px rgba(16, 185, 129, 0.5); }
+
+        /* 首頁橫幅 */
+        header { 
+            min-height: 100vh; 
+            display: flex; flex-direction: column; justify-content: center; align-items: center; 
+            text-align: center; padding: 120px 20px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        header::before {
+            content: ''; position: absolute; top: -10%; left: -10%; width: 120%; height: 120%;
+            background: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80') center/cover;
+            opacity: 0.15; z-index: -1; filter: contrast(120%) brightness(80%);
+            mask-image: radial-gradient(black, transparent 80%);
+            -webkit-mask-image: radial-gradient(black, transparent 80%);
+        }
+        header h2 { font-size: 1.1rem; color: var(--primary); margin-bottom: 20px; letter-spacing: 4px; font-weight: 700; border: 1px solid var(--primary); padding: 5px 15px; border-radius: 30px; }
+        header h1 { font-size: 4.5rem; font-weight: 900; margin-bottom: 25px; line-height: 1.3; letter-spacing: 2px; text-shadow: 0 10px 30px rgba(16, 185, 129, 0.3); }
+        header p { font-size: 1.15rem; max-width: 800px; margin-bottom: 50px; color: var(--text-muted); line-height: 2; text-align: justify; text-align-last: center;}
+        
+        .btn-modern {
+            padding: 15px 40px; 
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white; text-decoration: none; border-radius: 50px; 
+            font-weight: bold; font-size: 1.1rem;
+            transition: all 0.4s;
+            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.2);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .btn-modern:hover { transform: scale(1.05) translateY(-3px); box-shadow: 0 15px 30px rgba(59, 130, 246, 0.4); }
+
+        /* 區塊共用 */
+        section { padding: 90px 8vw; position: relative; }
+        .section-title { font-size: 2.2rem; font-weight: 900; margin-bottom: 50px; text-align: center; }
+        
+        /* 便當盒網格 */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 25px;
+            grid-auto-flow: dense;
+        }
+        .bento-card {
+            background: var(--surface);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 35px;
+            transition: transform 0.3s, border-color 0.3s;
+            overflow: hidden;
+            position: relative;
+            display: flex; flex-direction: column;
+        }
+        .bento-card:hover { transform: translateY(-3px); border-color: var(--primary); box-shadow: 0 10px 30px rgba(16, 185, 129, 0.1); }
+        .col-span-12 { grid-column: span 12; }
+        .col-span-6 { grid-column: span 6; }
+        .col-span-4 { grid-column: span 4; }
+
+        .card-icon { font-size: 1.8rem; margin-bottom: 20px; color: var(--primary); }
+        .bento-card h3 { font-size: 1.4rem; margin-bottom: 15px; color: #fff; font-weight: 700; }
+        .bento-card p { color: var(--text-muted); text-align: justify; font-size: 1rem; }
+        .bento-card ul { margin-left: 20px; color: var(--text-muted); margin-top: 15px; }
+
+        /* 照片卡片 - 方法 B：解除高度限制 */
+        .photo-card { padding: 0; position: relative; display: block; overflow: hidden; border-radius: 20px; }
+        .photo-card img { width: 100%; height: auto; display: block; z-index: 0; opacity: 0.8; transition: transform 0.5s, opacity 0.5s; }
+        .photo-card:hover img { transform: scale(1.05); opacity: 1; }
+        .photo-overlay { position: absolute; bottom: 0; left: 0; right: 0; z-index: 1; padding: 25px; background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, transparent 100%); }
+        
+        /* 替換照片提示標籤 */
+        .replace-hint {
+            position: absolute; top: 15px; right: 15px; z-index: 2;
+            background: rgba(239, 68, 68, 0.85); color: white; padding: 6px 12px; border-radius: 8px; font-size: 0.85rem; font-weight: bold; border: 1px solid rgba(255,255,255,0.3); backdrop-filter: blur(5px);
+        }
+
+        /* 表格設計 */
+        .table-responsive { width: 100%; overflow-x: auto; margin-top: 20px; border-radius: 12px; border: 1px solid var(--border); background: rgba(0,0,0,0.3); }
+        table { width: 100%; border-collapse: collapse; min-width: 700px; }
+        th { background: rgba(16, 185, 129, 0.15); color: var(--primary); padding: 16px; text-align: left; font-size: 1.05rem; border-bottom: 2px solid var(--primary); white-space: nowrap; }
+        td { padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.05); color: var(--text-main); font-size: 0.95rem; vertical-align: top; text-align: justify; }
+        .tag { background: rgba(255,255,255,0.05); border: 1px solid var(--border); padding: 3px 8px; border-radius: 6px; color: var(--primary); font-size: 0.9rem; margin-right: 5px; }
+
+        /* ---------------- 新增：時間線設計 ---------------- */
+        .timeline {
+            position: relative;
+            max-width: 1000px;
+            margin: 40px auto 0;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 20px;
+            width: 4px;
+            background: var(--border);
+            border-radius: 4px;
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 50px;
+            padding-left: 70px;
+        }
+        .timeline-icon {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 44px;
+            height: 44px;
+            background: var(--bg-color);
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--primary);
+            font-size: 1.2rem;
+            z-index: 2;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+        }
+        .timeline-content {
+            background: var(--surface);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: center;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+        .timeline-content:hover {
+            transform: translateX(5px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.1);
+        }
+        .timeline-time {
+            display: inline-block;
+            padding: 6px 15px;
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--primary);
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        .timeline-text h3 {
+            color: #fff;
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        .timeline-text p {
+            color: var(--text-muted);
+            text-align: justify;
+            line-height: 1.8;
+        }
+
+        footer { text-align: center; padding: 40px 20px; border-top: 1px solid var(--border); margin-top: 60px; background: rgba(0,0,0,0.5); }
+
+        @media (max-width: 1024px) {
+            .col-span-4, .col-span-6 { grid-column: span 12; }
+            .timeline-content { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class=</i>Z世代地質探索者</div>
+        <ul>
+            <li><a href="#sec1">學經歷</a></li>
+            <li><a href="#sec2">計畫了解</a></li>
+            <li><a href="#sec3">申請動機</a></li>
+            <li><a href="#sec4">未來展望</a></li>
+            <li><a href="#sec5">預算與附錄</a></li>
+        </ul>
+    </nav>
+
+    <header>
+        <h2>青年百億海外圓夢基金計畫</h2>
+        <h1 class="text-gradient">Z世代地質探索者</h1>
+        <p>「沒有備用星球」— 從看懂地球的極端環境，到打造守護臺灣的科技防災韌性網。這是一場完美融合<strong>資訊工程 (IoT)</strong>與<strong>環境工程 (災防)</strong>的跨域實踐。我是馬均翔。</p>
+        <a href="#sec1" class="btn-modern">閱讀計畫書 </a>
+    </header>
+
+    <section id="sec1">
+        <h2 class="section-title"><span class="text-gradient">一、</span> 申請青年之學經歷</h2>
+        
+        <div class="bento-grid">
+            <div class="bento-card col-span-12">
+                
+                <h3>學術表現與卓越自律力</h3>
+                <p>我具備扎實的學術基礎與卓越執行力。高一上學期學業總平均達 <strong>94.7 分</strong>（全班第二名），其中英文科取得 <strong>99 分</strong>之頂尖成績，奠定了深厚的外語文法底蘊。國中教育會考更在國文與數學取得 <strong>A++</strong>，展現了嚴謹的邏輯思維與自我管理能力。此外，擔任社團社長與參與攝影比賽的經歷，強化了我將數據轉化為視覺敘事的能力。</p>
+                
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 20%;">時期階段</th>
+                                <th style="width: 40%;">學經歷亮點</th>
+                                <th style="width: 40%;">核心能力與特質</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag">高一上學期</span></td>
+                                <td>學業總平均 94.7 分、英文 99 分</td>
+                                <td>高效學習力、穩健的外語與學術基礎</td>
+                            </tr>
+                            <tr>
+                                <td><span class="tag">國中會考</span></td>
+                                <td>國文、數學 A++ 頂尖成績</td>
+                                <td>嚴謹的數理邏輯、精熟的閱讀理解</td>
+                            </tr>
+                            <tr>
+                                <td><span class="tag">高中社團</span></td>
+                                <td>擔任「生活醫起來」社長、攝影比賽經驗</td>
+                                <td>團隊領導力、資源協調、藝術實踐力</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            
+
+            <div class="bento-card col-span-4 photo-card overflow-hidden">
+                <img src="https://i.postimg.cc/5ycS086T/ying-mu-xie-qu-hua-mian-2026-03-28-225047.png" alt="成績單意境">
+                <div class="photo-overlay">
+                    <h4 style="color: white; margin: 0;">學期成績優異</h4>
+                </div>
+            </div>
+
+            <div class="bento-card col-span-4 photo-card overflow-hidden">
+                <img src="https://i.postimg.cc/8PmmpJDX/ying-mu-xie-qu-hua-mian-2026-03-28-225059.png" alt="會考成績單">
+                <div class="photo-overlay"><h4 style="color: white; margin: 0;">教育會考國數雙 A++ 證明</h4></div>
+            </div>
+
+            <div class="bento-card col-span-4 photo-card overflow-hidden">
+                <img src="https://i.postimg.cc/sg0f7msc/ying-mu-xie-qu-hua-mian-2026-03-22-184113.png" alt="畢業證書">
+                <div class="photo-overlay"><h4 style="color: white; margin: 0;">攝影比賽證明</h4></div>
+            </div>
+            
+            <div class="bento-card col-span-12" style="margin-top: 20px;">
+                <h3>實作經驗：物聯網智慧溫控傳輸系統</h3>
+                <p>開發 IoT 醫療冷鏈系統的經驗，讓我體認到「工程技術必須適應自然環境」。醫療冷鏈的核心在於「用工程克服極端環境」，這與沙漠觀測的需求不謀而合。面對劇烈溫差與缺乏通訊設施，本專案的雙機備援與離線藍牙技術，能有效確保野外觀測數據的完整與精準。</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="sec2">
+        <h2 class="section-title"><span class="text-gradient">二、</span> 圓夢機會內容與了解情形</h2>
+        <div class="bento-grid">
+            <div class="bento-card col-span-12">
+                <p>本計畫以美國西南部六大指標性地質場域為核心，探究極端氣候下的環境調適策略，並對接臺灣痛點進行轉化。</p>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 20%;">見學場域</th>
+                                <th style="width: 40%;">海外觀察重點</th>
+                                <th style="width: 40%;">臺灣痛點對接</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag">布萊斯峽谷</span></td>
+                                <td>探究物理風化對脆弱岩層的破壞力。</td>
+                                <td>應用於蘇花路廊脆弱邊坡之物聯網感測預警。</td>
+                            </tr>
+                            <tr>
+                                <td><span class="tag">莫哈維沙漠</span></td>
+                                <td>極端高溫下的資源治理與耐熱設計。</td>
+                                <td>對應都市熱島效應，轉化為校園節能節水方案。</td>
+                            </tr>
+                            <tr>
+                                <td><span class="tag">胡佛水壩</span></td>
+                                <td>水電循環與低環境衝擊之基礎建設升級。</td>
+                                <td>為臺灣偏鄉醫療體系構思斷電時的微電網備援。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="sec3">
+        <h2 class="section-title"><span class="text-gradient">三、</span> 申請動機與核心願景</h2>
+        <div class="bento-grid">
+            <div class="bento-card col-span-12">
+                
+                <h3>從室內程式碼走向極端自然</h3>
+                <p>生長在地震與氣候變遷影響加劇的臺灣，我深知環境韌性的重要性。過去開發 IoT 系統的經驗讓我體悟到，科技不應只存在於溫室之中，而必須具備抵抗極端條件的實力。美國西南部擁有最嚴苛的地質與氣候環境，以及成熟的資源治理架構，這為我將「資訊工程」跨域應用於「防災監測」提供了無可取代的學習場域。</p>
+                
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 20%;">驅動層面</th>
+                                <th style="width: 80%;">具體動機與目標</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tag">個人突破</span></td>
+                                <td>跨出純軟體開發的舒適圈，實地挑戰極端環境下的硬體部署與抗災設計。</td>
+                            </tr>
+                            <tr>
+                                <td><span class="tag">專業鏈結</span></td>
+                                <td>汲取海外地質公園在離線通訊、低功耗感測與極端溫差下的系統穩定性架構。</td>
+                            </tr>
+                            <tr>
+                                <td><span class="tag">社會回饋</span></td>
+                                <td>將見學經驗轉化為低成本、高可靠的 IoT 預警方案，回饋臺灣邊坡或偏鄉防災需求。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="bento-card col-span-6 photo-card overflow-hidden">
+                
+                <img src="https://i.postimg.cc/xCjW5JYZ/ying-mu-xie-qu-hua-mian-2026-03-28-232728.png" alt="極端環境示意">
+                <div class="photo-overlay">
+                    <h4 style="color: white; margin: 0;">直擊極端氣候現場</h4>
+                </div>
+            </div>
+
+           
+            </div>
+        
+    </section>
+
+    <section id="sec4">
+        <h2 class="section-title"><span class="text-gradient">四、</span> 未來展望與社會影響力</h2>
+        
+        <div class="bento-grid" style="margin-bottom: 20px;">
+            <div class="bento-card col-span-12">
+                <h3>階段性成果發表方案</h3>
+                <p>我規劃了三階段發表：回國後透過<strong>同儕共學</strong>校準內容、舉辦<strong>全校演說</strong>推廣防災意識、最後進行<strong>數位策展</strong>並發布雙語科普紀錄片。以下為具體時程規劃：</p>
+            </div>
+        </div>
+
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-icon"><i class="fa-solid fa-users-viewfinder"></i></div>
+                <div class="timeline-content" style="display: block;">
+                    <div class="timeline-text">
+                        <span class="timeline-time">返國後 1 個月內</span>
+                        <h3>Stage 1: 跨域同儕共學研討</h3>
+                        <p>與校內同學及專題組員進行初步成果分享。將海外收集的觀測數據與見聞進行整理與校準，透過小型工作坊凝聚共識，為後續擴大推廣奠定堅實基礎。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-icon"><i class="fa-solid fa-microphone-lines"></i></div>
+                <div class="timeline-content" style="display: block;">
+                    <div class="timeline-text">
+                        <span class="timeline-time">返國後 3 個月內</span>
+                        <h3>Stage 2: 校園倡議與專業演說</h3>
+                        <p>於全校朝會或大型專題講座進行發表。結合美國地質公園的災防案例，向全校師生推廣極端氣候下的環境韌性意識，擴大實質的社會影響力。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-icon"><i class="fa-solid fa-film"></i></div>
+                <div class="timeline-content" style="display: block;">
+                    <div class="timeline-text">
+                        <span class="timeline-time">返國後半年內</span>
+                        <h3>Stage 3: 雙語紀錄片數位發布</h3>
+                        <p>將見學過程、IoT 系統實作畫面與防災倡議剪輯成高品質雙語科普紀錄片。發布於 YouTube 等影音平台進行數位策展，讓知識傳遞突破地域與語言限制。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section id="sec5">
+        <h2 class="section-title"><span class="text-gradient">五、</span> 預算與系統實作附錄</h2>
+        <div class="bento-grid">
+            <div class="bento-card col-span-12">
+                <h3>計畫預算規劃與附錄資料</h3>
+                <div class="photo-card" style="margin-top:15px;">
+                    
+                    <img src="https://i.postimg.cc/7YphRD57/ying-mu-xie-qu-hua-mian-2026-03-21-014230.png" alt="預算表圖片空格">
+                    <div class="photo-overlay"><h4 style="margin: 0; color: white;">經費預算表 / 補充文件</h4></div>
+                </div>
+            </div>
+
+            <div class="bento-card col-span-6">
+                <h3>ESP32實作</h3>
+                <div class="photo-card" style="margin-top:15px;">
+                    
+                    <img src="https://i.postimg.cc/D0G0vYDJ/ying-mu-xie-qu-hua-mian-2026-03-20-015026.png">
+                    <div class="photo-overlay"><h4 style="margin: 0; color: white;">程式圖片</h4></div>
+                </div>
+            </div>
+            
+            <div class="bento-card col-span-6">
+                <h3>本地備援終端 (LCD 顯示)</h3>
+                <div class="photo-card" style="margin-top:15px;">
+                    
+                    <img src="https://i.postimg.cc/yNzc473t/ying-mu-xie-qu-hua-mian-2026-03-25-010933.png" alt="螢幕數值照片">
+                    <div class="photo-overlay"><h4 style="margin: 0; color: white;">感測數值本地輸出</h4></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        
+        <h2 style="letter-spacing: 2px; margin-bottom: 15px;">馬均翔 <span style="font-weight: normal; font-size: 1rem; color: var(--primary);">計畫申請人</span></h2>
+        <p style="color: var(--text-muted);"><i class=""></i> mstevena0515@gmail.com &nbsp;|&nbsp; <i class=""></i> 0911-595-538</p>
+        <p style="margin-top: 20px; font-size: 0.85rem; color: #555;">© 2026 教育部青年發展署 計畫專用展示網頁</p>
+    </footer>
+   
+
+    <script>
+        // 平滑滾動
+        document.querySelectorAll('nav a, header a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetSection = document.getElementById(targetId);
+                if (targetSection) {
+                    window.scrollTo({ top: targetSection.offsetTop - 80, behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
